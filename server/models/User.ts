@@ -3,7 +3,7 @@ import { Document, model, Schema } from 'mongoose'
 export interface IUser extends Document{
     name: string;
     email: string;
-    password?: string;
+    password: string;
     phone?: string;
     role: "user" | "admin" | "owner";
     createdAt: Date;
@@ -19,11 +19,11 @@ const UserSchema = new Schema<IUser> ({
 },{timestamps:true})
 
 // Remove Password when converting to Json
-UserSchema.set("toJSON",{
-    transform: (doc,ret)=>{
-        delete ret.password;
-        return ret;
+UserSchema.set("toJSON", {
+    transform: (doc, ret) => {
+        const { password, ...userWithoutPassword } = ret;
+        return userWithoutPassword;
     }
-})
+});
 
 export const User = model<IUser>("User",UserSchema)

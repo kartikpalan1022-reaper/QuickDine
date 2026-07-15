@@ -72,7 +72,7 @@ export const loginUser = async(req:Request,res:Response):Promise<void>=>{
             return;
         }
         // Check if password matches (user.password is not defined because we queried it)
-        const isMatch = await bcrypt.compare(password,user.password || "");
+        const isMatch = await bcrypt.compare(password,user.password);
         if(!isMatch){
             res.status(401).json({message:"Invalid email or password"});
             return;

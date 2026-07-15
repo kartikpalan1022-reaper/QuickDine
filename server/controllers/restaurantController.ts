@@ -135,7 +135,7 @@ export const getRestaurantAvailability = async(req:Request,res:Response):Promise
             res.status(400).json({message:"Please provide a date"});
             return;
         }
-        const restaurant = await Restaurant.findById(req.params.id,status:"approved");
+        const restaurant = await Restaurant.findById({_id:req.params.id,status:"approved"});
         if(!restaurant){
             res.status(404).json({message:"Restaurant not found"});
             return;  

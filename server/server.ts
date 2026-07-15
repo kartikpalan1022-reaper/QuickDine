@@ -1,7 +1,8 @@
 import "dotenv/config";
-import express, { Request, Response } from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import cors from "cors";
 import connectDB from "./config/db.js";
+import authRouter from "./routes/authRoutes.js";
 
 const app = express();
 
@@ -16,6 +17,22 @@ const port = process.env.PORT || 5000;
 
 app.get('/', (req: Request, res: Response) => {
     res.send('Server is Live!');
+});
+app.use('/api/auth',authRouter);
+
+// Global error handler
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+    console.error("Unhandled error:", err);
+
+    const isProd = process.env.NODE_ENV === "production";
+
+    res.status(500).json({
+        message: isProd
+            ? "Internal Server Error"
+            : err.message || "Internal Server Error",
+
+        stack: isProd ? undefined : err.stack
+    });
 });
 
 app.listen(port, () => {

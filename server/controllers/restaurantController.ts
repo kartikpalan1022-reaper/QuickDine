@@ -4,7 +4,9 @@ import jwt from "jsonwebtoken"
 import { User } from "../models/User.js";
 import { Booking } from "../models/Booking.js";
 
-
+const escapeRegex = (value: string): string => {
+    return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+};
 // Get all restaurants with search and filters  
 // GET /api/restaurants
 export const getRestaurants = async(req:Request,res:Response):Promise<void> =>{
@@ -14,13 +16,22 @@ export const getRestaurants = async(req:Request,res:Response):Promise<void> =>{
         // Build query object
         const queryObj:any = {status:"approved"};
         
-        if(search){
-            queryObj.$or = [
-                {name:{$regex:search,$options:"i"}},
-                {tags:{$regex:search,$options:"i"}},
-                {location:{$regex:search,$options:"i"}},
+        // if(search){
+        //     queryObj.$or = [
+        //         {name:{$regex:search,$options:"i"}},
+        //         {tags:{$regex:search,$options:"i"}},
+        //         {location:{$regex:search,$options:"i"}},
 
-            ]
+        //     ]
+        // }
+        if (typeof search === "string" && search.trim()) {
+            const safeSearch = escapeRegex(search.trim());
+
+            queryObj.$or = [
+                { name: { $regex: safeSearch, $options: "i" } },
+                { tags: { $regex: safeSearch, $options: "i" } },
+                { location: { $regex: safeSearch, $options: "i" } },
+            ];
         }
         if(priceRange){
             const prices = Array.isArray(priceRange) ? priceRange : [priceRange];
@@ -29,8 +40,15 @@ export const getRestaurants = async(req:Request,res:Response):Promise<void> =>{
         if(rating){
             queryObj.rating = {$gte:parseFloat(rating as string)}
         }
-        if(location){
-            queryObj.location = {$regex:location as string,$options:"i"};
+        // if(location){
+        //     queryObj.location = {$regex:location as string,$options:"i"};
+        // }
+        if (typeof location === "string" && location.trim()) {
+            const safeLocation = escapeRegex(location.trim());
+            queryObj.location = {
+                $regex: safeLocation,
+                $options: "i"
+            };
         }
 
         // Sorting
@@ -117,7 +135,7 @@ export const getRestaurantAvailability = async(req:Request,res:Response):Promise
             res.status(400).json({message:"Please provide a date"});
             return;
         }
-        const restaurant = await Restaurant.findById(req.params.id);
+        const restaurant = await Restaurant.findById(req.params.id,status:"approved");
         if(!restaurant){
             res.status(404).json({message:"Restaurant not found"});
             return;  

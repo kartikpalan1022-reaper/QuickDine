@@ -86,6 +86,9 @@ export const createOwnerRestaurant = async(req:AuthRequest,res:Response):Promise
         res.status(201).json(restaurant);
     }
     catch(error:any){
+        if (error.code === 11000) {
+             res.status(400).json({message: "You already have a restaurant registered"});
+        }
         console.error(error);
         res.status(400).json({message:error.message}); 
     }

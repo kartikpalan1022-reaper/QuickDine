@@ -24,7 +24,7 @@ app.get('/', (req: Request, res: Response) => {
 app.use('/api/auth',authRouter);
 app.use('/api/restaurants',restaurantRouter);
 app.use('/api/bookings',bookingRouter);
-app.use('/api/ownner',ownerRouter)
+app.use('/api/owner',ownerRouter)
 
 // Global error handler
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {

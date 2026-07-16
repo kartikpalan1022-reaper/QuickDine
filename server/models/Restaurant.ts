@@ -40,7 +40,7 @@ const RestaurantSchema = new Schema<IRestaurant> ({
     availableSlots: [{type:String}],
     featured: {type:Boolean,default:false},
     exclusive: {type:Boolean,default:false},
-    owner: {type: Schema.Types.ObjectId,ref:"User",required:true},
+    owner: {type: Schema.Types.ObjectId,ref:"User",required:true,unique:true},
     status: {type:String,enum:["pending","approved","rejected"],default:"pending"},
     totalSeats: {type:Number,default:20,min:1}
 },{timestamps:true})

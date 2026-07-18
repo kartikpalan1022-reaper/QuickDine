@@ -218,4 +218,4 @@ export const dummyAdminStats = {
     ],
 };
 
-export const dummyFeaturedRestaurants = [dummyRestaurant[0], dummyRestaurant[1], dummyRestaurant[2]];
+

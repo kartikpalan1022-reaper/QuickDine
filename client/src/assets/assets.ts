@@ -100,7 +100,6 @@ export const dummyUser = {
     updatedAt: "2026-06-17T13:40:21.669Z",
 };
 
-export const dummyRestaurant = [];
 
 export const dummyAvailability = [
     { time: "18:00", availableSeats: 45, isAvailable: true },

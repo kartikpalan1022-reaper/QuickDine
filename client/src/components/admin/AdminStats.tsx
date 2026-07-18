@@ -34,7 +34,7 @@ export default function AdminStats({ stats }: AdminStatsProps) {
             <div className="space-y-4">
                 <h3 className="font-display text-lg font-medium text-primary">Recent Bookings Activity</h3>
 
-                {stats.latestBookings?.length === 0 ? (
+                {stats.latestBooking?.length === 0 ? (
                     <p className="text-xs text-black/40 italic">No bookings recorded on the platform.</p>
                 ) : (
                     <div className="bg-white border border-outline-variant/20 rounded-md overflow-hidden shadow-sm">

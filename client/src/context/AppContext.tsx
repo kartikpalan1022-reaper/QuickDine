@@ -92,9 +92,14 @@ export const AppContextProvider = ({ children }: Props) => {
                     const res = await api.get("/auth/me");
                     setUser(res.data);
                 }
-                catch(error:any){
+                catch (error: any) {
                     toast.error(error?.response?.data?.message || error?.message);
-                    logout();
+
+                    const status = error?.response?.status;
+
+                    if (status === 401 || status === 403) {
+                        logout();
+                    }
                 }
             }
 

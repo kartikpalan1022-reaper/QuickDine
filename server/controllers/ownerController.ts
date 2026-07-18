@@ -4,18 +4,39 @@ import { Restaurant } from "../models/Restaurant.js";
 import { v2 as cloudinary } from "cloudinary";
 import { Booking } from "../models/Booking.js";
 
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+// Helper function to upload buffer to Cloudinary
+const uploadToCloudinary = (
+  fileBuffer: Buffer
+): Promise<{ secure_url: string }> => {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      {
+        folder: "QuickDine",
+      },
+      (error, result) => {
+        if (error) {
+          console.error("Cloudinary Error:", error);
+          return reject(error);
+        }
 
-//Helper function to upload buffer to Cloudinary
-const uploadToCloudinary = (fileBuffer: Buffer):Promise<{secure_url:string}>=>{
-    return new Promise((resolve,reject)=>{
-        const stream = cloudinary.uploader.upload_stream({folder:"QuickDine"},(error,result)=>{
-            if(error) return reject(error);
-            if(!result) return reject(new Error("Upload failed"));
-            resolve({secure_url:result.secure_url});
-        })
-        stream.end(fileBuffer)
-    })
-}
+        if (!result) {
+          return reject(new Error("Upload failed"));
+        }
+
+        resolve({
+          secure_url: result.secure_url,
+        });
+      }
+    );
+
+    stream.end(fileBuffer);
+  });
+};
 
 // Get owner's restaurant
 // GET /api/owner/restaurant
@@ -57,10 +78,16 @@ export const createOwnerRestaurant = async(req:AuthRequest,res:Response):Promise
             return;
         }
         // Handle Image 
-        let imageUrl ="";
-        if(req.file){
+        let imageUrl = "";
+
+        if (req.file) {
+            console.log("Uploading image to Cloudinary...");
+
             const result = await uploadToCloudinary(req.file.buffer);
+
             imageUrl = result.secure_url;
+
+            console.log("Uploaded:", imageUrl);
         }
 
         // Setup parsed tags and slots 

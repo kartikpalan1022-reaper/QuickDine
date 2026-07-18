@@ -14,7 +14,7 @@ const generateToken = (id:string)=>{
 // POST : /api/auth/register
 export const registerUser = async(req:Request,res:Response):Promise<void>=>{
     try{
-        const {name,email,password,phone }=req.body;
+        const {name,email,password,phone,role }=req.body;
         if(!name || !email || !password){
             res.status(400).json({message:"Enter all required fields"});
             return;
@@ -34,6 +34,7 @@ export const registerUser = async(req:Request,res:Response):Promise<void>=>{
             email,
             password:hashedPassword,
             phone,
+            role: role === "owner" ? "owner" : "user"
             
         })
         if(user){

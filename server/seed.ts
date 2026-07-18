@@ -16,6 +16,10 @@ const seedData = async ()=>{
 
         console.log("Database connected....Clearing existing collections");
 
+        if(process.env.NODE_ENV === "production" ||process.env.ALLOW_DESTRUCTIVE_SEED !== "true"){
+            throw new Error("Seeding is disabled.");
+        }
+
         await User.deleteMany({});
         await Restaurant.deleteMany({});
         await Booking.deleteMany({});
@@ -23,9 +27,9 @@ const seedData = async ()=>{
         console.log("Creating default users....");
 
         const salt = await bcrypt.genSalt(10);
-        const adminPassword = await bcrypt.hash("Palan@1270",salt);
-        const userPassword = await bcrypt.hash("user123",salt);
-        const ownerPassword = await bcrypt.hash("owner123",salt);
+        const adminPassword = await bcrypt.hash(process.env.SEED_ADMIN_PASSWORD!,salt);
+        const userPassword = await bcrypt.hash(process.env.SEED_USER_PASSWORD!,salt);
+        const ownerPassword = await bcrypt.hash(process.env.SEED_OWNER_PASSWORD!,salt);
 
         // Admin
         const adminUser = await User.create({
